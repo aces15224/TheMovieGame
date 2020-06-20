@@ -1,9 +1,0 @@
-/* .nav{
-    display:flex;
-    list-style:none;
-}; */
-
-.nav-item, a.nav-link.modal-trigger{
-    text-decoration:none;
-
-}
