@@ -82,6 +82,7 @@ var getConfig = "https://api.themoviedb.org/3/configuration?api_key=20748fb6c1ff
 var turn = 0
 var intervalId;
 var count = 10;
+var round = 1;
 
 var startClicked = false;
 var firstActorSelected = false;
@@ -115,8 +116,9 @@ function startScreen(){
     $("#secondActor").html("<img class='gifControl' src='./assets/images/curtainLeft.png' />")
     setTimeout(function(){
         var startDiv = $("<div>");
-        startDiv.addClass("gifControl1");
+        startDiv.addClass("gifControl");
         var startText = $("<p>");
+        startText.addClass("gifText")
         startText.text("CLICK TO START");
         startDiv.html(startText);
         $("#posterPic").html(startDiv);
@@ -131,28 +133,29 @@ $("#posterPlate").on("click", function(){
     startClicked = true;
     
     console.log(1)
-    var playerOne = $("<p>");
-    var playerTwo = $("<p>");
+    var playerOne = $("<p>").addClass("gifText");
+    var playerTwo = $("<p>").addClass("gifText");
+    var startText = $("<p>").addClass("gifText");
+
     playerOne.text("One Player");
     playerTwo.text("Two Players");
+    startText.html("Select How" + "<br />" + "Many Players");
+
 
     var playerOneDiv = $("<div>");
-    playerOneDiv.addClass("gifControl1");
+    playerOneDiv.addClass("gifControl");
     playerOneDiv.html(playerOne);
     
 
     var playerTwoDiv = $("<div>");
-    playerTwoDiv.addClass("gifControl1");
+    playerTwoDiv.addClass("gifControl");
     playerTwoDiv.html(playerTwo);  
     
     var startDiv = $("<div>");
-    startDiv.addClass("gifControl1");
-    var startText = $("<p>");
-    startText.html("Select How" + "<br />" + "Many Players").css("text-align", "center");
+    startDiv.addClass("gifControl");
     startDiv.html(startText);
-    $("#posterPic").html(startDiv);
 
-    // $("#start").html("Select How" + "<br />" + "Many Players").css("text-align", "center");
+    $("#posterPic").html(startDiv);
     $("#firstActor").html(playerOneDiv);
     $("#secondActor").html(playerTwoDiv); 
 })
@@ -179,20 +182,40 @@ $(document).on("click", "#facePlate2", function(){
 })
 
 function turnControl(){
-    console.log(currentPlayer)
+
     if((playerOneOut === true|| playerTwoOut===true) && (dual===true)){
         console.log(currentPlayer + "returnFalse" + dual)
         return false;
     }
     else if(solo === true){
         console.log(currentPlayer + "solo")
-        $("#playerName").text(currentPlayer)
+        $("#playerName").text("Player One")
+        roundControl()
         return false;
     }
     currentPlayer = currentPlayer === "Player One" ? "Player Two" : "Player One";
     console.log(currentPlayer + "turnControl")
     $("#playerName").text(currentPlayer)
+    roundControl()
+
     }
+
+function roundControl(){
+    console.log(round + "--------------------")
+    if (round === 3){
+        round = 1
+        console.log(round)
+    }
+    else{
+    round ++
+    console.log(round)    
+    }
+    console.log("got it")
+    roundTimer()
+
+    
+
+}
     
 
 // ajax call for base URL for all tmdb API calls *************************************************
@@ -292,7 +315,6 @@ function getFirstFilmography() {
 }
 
 function displayFirstPicture() {
-    console.log(actorArray[turn])
     console.log("turn" + turn + "------------------------")
     if(actorArray[turn].image.includes(defaultImage)){
         conc = actorArray[turn].image
@@ -315,11 +337,9 @@ function displayFirstPicture() {
     }
     else{
         $("#secondActor").html(`<img class= "gifControl" src="${conc}"  alt="Gif"></div>`+"<div class='actorName'>" + actor.toUpperCase() + "</div>")
-        // turn ++
-        // setTimeout(updateBoard, 1000 * 3);
-
-
+        
     }
+    clearInterval(intervalId)
     turnControl()
 }
 
@@ -407,8 +427,8 @@ function updateBoard() {
     $("#submit-answer").attr("data", "movie");
     $("#input-description").html("Select Movie")
     displayFirstPicture();
-    $("#secondActor").empty();
-    $("#posterPic").empty();
+    // $("#secondActor").empty();
+    // $("#posterPic").empty();
 }
 
 
@@ -522,7 +542,6 @@ function checkMovie() {
     filmographyArray = [];
     guessesArray.push(movie);
     displayPoster();
-    turnControl();
     $("#userInput").val(" ");
     $("#input-description").html("Select Next Actor")
     $("#submit-answer").attr("data", "actor")
@@ -541,7 +560,9 @@ function displayPoster() {
         console.log(response)
         var imgURL = actorConfig + movieImage;
         console.log(actorConfig)
-        // var imgURL = response.Poster;
+        clearInterval(intervalId);
+        turnControl();
+
         $("#posterPic").html(`<img class= "gifControl" src="${imgURL}"  alt="Gif"></div>`);
     });
 };
@@ -574,12 +595,27 @@ function gameOver(){
 }
 
 function roundTimer(){
+
+    count=30;
     intervalId = setInterval(function(){
-//         <div id="posterText">
-//     <p id="start"></p>
-// </div> 
         count--;
         console.log(count)
+        var imageUrl = "https://i.ibb.co/Zz1mh4m/clapper-Board.png"
+        var counterDiv = $("<div>");
+        counterDiv.css({"background-image":"url(" + imageUrl + ")", "background-position": "center",   "background-size": "auto"})
+        counterDiv.addClass("gifControl")
+        var countText = $("<p>")
+        countText.addClass("gifText")
+        countText.text(count)
+        countText.css({"color":"white", "font-size":" 15px", "text-align":"center"})
+        counterDiv.html(countText)
+        if((round===1) || (round===2)){
+            $("#posterPic").html(counterDiv);
+        }
+        if(round===3){
+            $("#secondActor").html(counterDiv);
+        }
+
         if((count<=0) && (playerOneOut || playerTwoOut)){
             clearInterval(intervalId);
             gameOver()
@@ -591,10 +627,14 @@ function roundTimer(){
             console.log(playerOneOut)
 
             turnControl()
-        }
-        $("#posterText").html(count)
+        }   
+    
 
-    },100000)
+
+
+    },1000)
+   
+
 }
 
 

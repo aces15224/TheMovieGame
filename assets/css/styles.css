@@ -128,25 +128,34 @@ p{
     padding:0;
     margin:0;    
     z-index:-1;
-}
-
-.gifControl1{
     background-color:#28abfc;
     font-family: 'Press Start 2P', cursive;
     text-shadow: 2px 2px rgb(98, 95, 133);
-    /* font-weight: bold; */
+    font-size: 65%;
+    color:white;    
+}
+
+.gifText{
+    text-align: center;
+    position: relative;
+    top: 46%;
+}
+
+/* .gifControl1{
+    background-color:#28abfc;
+    font-family: 'Press Start 2P', cursive;
+    text-shadow: 2px 2px rgb(98, 95, 133);
     font-size: 65%;
     color:white;
     height:240px;
     width: 175px;
     padding:0;
-    /* margin:0;     */
     z-index:-1;
     display:flex;
     justify-content: center;
-  align-items: center;
+    align-items: center;
 
-}
+} */
 #posterText{
     color:white;
     font-family: 'Press Start 2P', cursive;
