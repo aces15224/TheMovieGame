@@ -89,6 +89,7 @@ var firstActorSelected = false;
 var turnComplete = false;
 var dual = false;
 var solo = false;
+var loading = false;
 var pOneScore = 0;
 var pTwoScore = 0;
 var currentPlayer = "Player One";
@@ -181,42 +182,149 @@ $(document).on("click", "#facePlate2", function(){
     beginGame()
 })
 
+// function loadingSegment(){
+//     if(turnComplete===true){
+//         $("#posterPic").html("<img class='gifControl' src='./assets/images/curtainLeft.png' />")
+//         $("#firstActor").html("<img class='gifControl' src='./assets/images/curtainLeft.png' />")
+//         $("#secondActor").html("<img class='gifControl' src='./assets/images/curtainLeft.png' />")
+//         setTimeout(function(){
+//             updateBoard()   
+//         },1000)   
+//     }    
+// }
+
 function turnControl(){
 
     if((playerOneOut === true|| playerTwoOut===true) && (dual===true)){
-        console.log(currentPlayer + "returnFalse" + dual)
-        return false;
-    }
-    else if(solo === true){
-        console.log(currentPlayer + "solo")
-        $("#playerName").text("Player One")
-        roundControl()
-        return false;
-    }
+        console.log("turncontrol1")
+        currentPlayer = currentPlayer === "Player One" ? "Player Two" : "Player One";
+
+        $("#playerName").text(currentPlayer)
+         
+     }
+     else if(solo === true){
+         console.log(currentPlayer + "solo")
+         $("#playerName").text("Player One")
+         roundControl()
+         return false;
+     }
+     else if((playerOneOut === true && playerTwoOut===true)){
+         console.log("pone and ptwo out")
+         gameOver()
+     } 
     currentPlayer = currentPlayer === "Player One" ? "Player Two" : "Player One";
     console.log(currentPlayer + "turnControl")
     $("#playerName").text(currentPlayer)
     roundControl()
-
     }
 
 function roundControl(){
-    console.log(round + "--------------------")
     if (round === 3){
         round = 1
-        console.log(round)
     }
     else{
-    round ++
-    console.log(round)    
+        round ++
+        roundTimer()
     }
-    console.log("got it")
-    roundTimer()
-
-    
-
 }
+
+
+function roundTimer(){
+    var promptText = "";
+    var turnPrompter = $("<div>");
+    turnPrompter.addClass("gifControl");
+    var turnPrompt = $("<p>")
+        turnPrompt.addClass("gifText")
+        turnPrompt.text(promptText)
+        turnPrompt.css({"color":"white", "font-size":" 15px", "text-align":"center"})
+    turnPrompter.html(turnPrompt)
+    switch(round){
+        case 1 : 
+            console.log("round 1");
+            
+            promptText = "Select First Actor"
+            turnPrompt.text(promptText)
+
+            $("#posterPic").html(turnPrompter);
+
+            break;
+        case 2: 
+            promptText = "Select Movie"
+            turnPrompt.text(promptText)
+
+            $("#posterPic").html(turnPrompter);
+
+            break;
+        case 3: 
+            promptText = "Select Second Actor"
+            turnPrompt.text(promptText)
+
+            $("#secondActor").html(turnPrompter);
+            break;
+    }
+
+    count=10;
+    setTimeout(function(){
+            intervalId = setInterval(function(){
+            count--;
+            console.log(playerOneOut)
+            var imageUrl = "https://i.ibb.co/Zz1mh4m/clapper-Board.png"
+            var counterDiv = $("<div>");
+            counterDiv.css({"background-image":"url(" + imageUrl + ")", "background-position": "center",   "background-size": "auto"})
+            counterDiv.addClass("gifControl")
+            var countText = $("<p>")
+            countText.addClass("gifText")
+            countText.text(count)
+            countText.css({"color":"white", "font-size":" 15px", "text-align":"center"})
+            counterDiv.html(countText)
+            if((round===1) || (round===2)){
+                $("#posterPic").html(counterDiv);
+            }
+            if(round===3){
+                $("#secondActor").html(counterDiv);
+            }
+
+            if((count<=0) && ((playerOneOut===true) || (playerTwoOut===true)) ){
+                console.log(playerOneOut + "------------------------------------")
+                clearInterval(intervalId);
+                gameOver()
+            }
+            else if((count<=0) && (dual===true)){
+                console.log("ELSE IF -----------------------------------------------")
+                clearInterval(intervalId);
+                if(currentPlayer === "Player One"){
+                    playerOneOut=true; 
+                    console.log("fired")
+                    currentPlayer = "Player Two"; 
+
+                }
+                else if(currentPlayer === "Player Two"){
+                    playerTwoOut=true;
+                    console.log("fired")
+
+                    currentPlayer = "Player One";
+                
+                }
+                //  ? playerOneOut = true : playerTwoOut = true)
+                // if(currentPlayer = "Player One" ? currentPlayer = "Player Two" : currentPlayer = "Player One" )
+
+
+                console.log(currentPlayer + "roundTimer")
+                console.log(playerOneOut)
+                // currentPlayer = currentPlayer === "Player One" ? "Player Two" : "Player One";
+
+                $("#playerName").text(currentPlayer)
+                roundTimer();
+
+                }
+            else if((count<=0) && (solo===true)){
+                clearInterval(intervalId);
+                gameOver()
+            }  
+        },1000)  
+    },1500)
     
+}
 
 // ajax call for base URL for all tmdb API calls *************************************************
 function getConfigData() {
@@ -315,6 +423,8 @@ function getFirstFilmography() {
 }
 
 function displayFirstPicture() {
+    clearInterval(intervalId)
+
     console.log("turn" + turn + "------------------------")
     if(actorArray[turn].image.includes(defaultImage)){
         conc = actorArray[turn].image
@@ -327,19 +437,19 @@ function displayFirstPicture() {
         console.log(actorConfig)
         $("#firstActor").html(`<img class= "gifControl" src="${conc}"  alt="Gif"></div>`+"<div class='actorName'>" + actor.toUpperCase() + "</div>"  ) 
         turn++    
-        console.log(1)
     }
     else if (turnComplete === true){
         $("#firstActor").html(`<img class= "gifControl" src="${conc}"  alt="Gif"></div>`+"<div class='actorName'>" + actor.toUpperCase() + "</div>"  )
         turn ++;
         turnComplete = false;
+        playerOneOut = false;
+        playerTwoOut = false;
 
     }
     else{
-        $("#secondActor").html(`<img class= "gifControl" src="${conc}"  alt="Gif"></div>`+"<div class='actorName'>" + actor.toUpperCase() + "</div>")
-        
+        $("#secondActor").html(`<img class= "gifControl" src="${conc}"  alt="Gif"></div>`+"<div class='actorName'>" + actor.toUpperCase() + "</div>")    
     }
-    clearInterval(intervalId)
+    // clearInterval(intervalId)
     turnControl()
 }
 
@@ -411,6 +521,21 @@ function displayFirstPicture() {
 
 
 // }
+function checkScore(){
+    if (playerOneOut === true){
+        pTwoScore ++
+        console.log(pTwoScore)
+    }
+    else if ((playerTwoOut === true)||(solo === true)){
+        pOneScore ++
+        console.log(pOneScore)
+    }
+    else{
+        pTwoScore ++
+        pOneScore ++
+        console.log(pOneScore + "----------" + pTwoScore ) 
+    }
+}
 
 
 function checkActor() {
@@ -418,7 +543,8 @@ function checkActor() {
     guessesArray.push(actor)
     displayFirstPicture();
     turnComplete = true;
-    setTimeout(updateBoard, 1000 * 3);
+    checkScore();
+    setTimeout(updateBoard, 1000);
 }
 
 function updateBoard() { 
@@ -426,10 +552,16 @@ function updateBoard() {
     $("#userInput").val(" ");
     $("#submit-answer").attr("data", "movie");
     $("#input-description").html("Select Movie")
-    displayFirstPicture();
+        $("#posterPic").html("<img class='gifControl' src='./assets/images/curtainLeft.png' />")
+        $("#firstActor").html("<img class='gifControl' src='./assets/images/curtainLeft.png' />")
+        $("#secondActor").html("<img class='gifControl' src='./assets/images/curtainLeft.png' />")
+        setTimeout(function(){
+            displayFirstPicture();
+        },1000 * 2)   
+    } 
     // $("#secondActor").empty();
     // $("#posterPic").empty();
-}
+
 
 
 // function displayPicture() {
@@ -578,64 +710,34 @@ function displayPoster() {
 function beginGame() {
     // resets all global variables to default values
     resetVariables();
-    roundTimer();
+    // roundTimer();
     // sets players turn order
     // setOrderofPlay(); 
     // runs all functions needed for each round 
     // Round();
+    $("#firstActor").html("<img src='../TheMovieGame/assets/images/curtainLeft.png' class='gifControl'/>")
+    $("#secondActor").html("<img src='../TheMovieGame/assets/images/curtainLeft.png' class='gifControl'/>");
+    // $("#posterPic").html();
     $("#playerName").text(currentPlayer)
- 
     $("#input-description").html("Select First Actor")
     $("#submit-answer").attr("data", "first")
+    roundTimer();
+
 }
 
 function gameOver(){
-    resetVariables();
-    alert("GameOver")
-}
-
-function roundTimer(){
-
-    count=30;
-    intervalId = setInterval(function(){
-        count--;
-        console.log(count)
-        var imageUrl = "https://i.ibb.co/Zz1mh4m/clapper-Board.png"
-        var counterDiv = $("<div>");
-        counterDiv.css({"background-image":"url(" + imageUrl + ")", "background-position": "center",   "background-size": "auto"})
-        counterDiv.addClass("gifControl")
-        var countText = $("<p>")
-        countText.addClass("gifText")
-        countText.text(count)
-        countText.css({"color":"white", "font-size":" 15px", "text-align":"center"})
-        counterDiv.html(countText)
-        if((round===1) || (round===2)){
-            $("#posterPic").html(counterDiv);
-        }
-        if(round===3){
-            $("#secondActor").html(counterDiv);
-        }
-
-        if((count<=0) && (playerOneOut || playerTwoOut)){
-            clearInterval(intervalId);
-            gameOver()
-        }
-        else if((count<=0) && (!playerOneOut && !playerTwoOut)){
-            clearInterval(intervalId);
-            if(currentPlayer = "Player One" ? playerOneOut = true : playerTwoOut = true)
-            console.log(currentPlayer + "roundTimer")
-            console.log(playerOneOut)
-
-            turnControl()
-        }   
+    clearInterval(intervalId);
+    setTimeout(function(){
+        $("#posterPic").html("<img class='gifControl' src='./assets/images/curtainLeft.png' />")
+        $("#firstActor").html("<img class='gifControl' src='./assets/images/curtainLeft.png' />")
+        $("#secondActor").html("<img class='gifControl' src='./assets/images/curtainLeft.png' />")    
+    },2000)
     
 
-
-
-    },1000)
-   
-
+    resetVariables();
+    console.log("GameOver")
 }
+
 
 
 $("#submit-answer").on("click", function (event) {
