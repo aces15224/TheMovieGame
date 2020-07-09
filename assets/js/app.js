@@ -89,6 +89,7 @@ var firstActorSelected = false;
 var turnComplete = false;
 var dual = false;
 var solo = false;
+var gameStart = false;
 // var loading = false;
 var gameOverBoolean = false;
 var pOneScore = 0;
@@ -183,8 +184,7 @@ $(document).on("click", "#facePlate1", function(){
         return false;
     }
     solo = true;
-    console.log(solo)
-    console.log(dual)
+    gameStart = true;
     beginGame()
 })
 
@@ -193,7 +193,7 @@ $(document).on("click", "#facePlate2", function(){
         return false;
     }
     dual = true;
-    console.log(solo + "1")
+    gameStart = true;
     beginGame()
 })
 
@@ -245,7 +245,6 @@ function roundControl(){
 
 function roundTimer(){
     if (gameOverBoolean === true){
-        console.log("true")
         return false;
     }
 
@@ -256,7 +255,7 @@ function roundTimer(){
     turnPrompt.addClass("gifText")
     turnPrompt.text(promptText)
     // turnPrompt.css({"color":"white", "font-size":" 15px", "text-align":"center"})
-    var playerPrepend = currentPlayer;
+    // var playerPrepend = currentPlayer;
     turnPrompter.html(turnPrompt)
     switch(round){
         case 1 : 
@@ -287,7 +286,6 @@ function roundTimer(){
     setTimeout(function(){
             intervalId = setInterval(function(){
             count--;
-            console.log(playerOneOut)
             var imageUrl = "https://i.ibb.co/Zz1mh4m/clapper-Board.png"
             var counterDiv = $("<div>");
             counterDiv.css({"background-image":"url(" + imageUrl + ")", "background-position": "center",   "background-size": "auto"})
@@ -314,7 +312,7 @@ function roundTimer(){
                 clearInterval(intervalId);
                 if(currentPlayer === "Player One"){
                     pOneStrikes++;
-                    console.log(pOneStrikes)
+                    console.log(pOneStrikes + "PONE TIME")
                     playerOneOut = true; 
                     if(pOneStrikes === 3){
                         gameOver()
@@ -325,7 +323,7 @@ function roundTimer(){
                 }
                 else if(currentPlayer === "Player Two"){
                     pTwoStrikes++;
-                    console.log(pTwoStrikes)
+                    console.log(pTwoStrikes + "PTWO TIME")
                     playerTwoOut=true;
                     if(pTwoStrikes === 3){
                         gameOver()
@@ -454,7 +452,7 @@ function getFirstFilmography() {
                     else if (dual === true){
                         if (currentPlayer === "Player One"){
                         pOneStrikes ++;
-                        console.log(pOneStrikes)
+                        console.log(pOneStrikes + "PONE STRIKE")
                         if(pOneStrikes === 3){
                             gameOver();
                         }
@@ -469,8 +467,10 @@ function getFirstFilmography() {
                         else{
                             pTwoStrikes ++
                             console.log(currentPlayer)
-                            console.log(pTwoStrikes)
-                            if(pTwoStrikes ===3) gameOver()
+                            console.log(pTwoStrikes + "PTWO STRIKE")
+                            if(pTwoStrikes ===3) {
+                                gameOver()   
+                            } 
                             playerTwoOut = true;
                             console.log(playerTwoOut)
                             clearInterval(intervalId);
@@ -482,16 +482,7 @@ function getFirstFilmography() {
 
                         } 
                     }
-    
-
-
-
-
-
-
-                    
-
-                    // if (currentPlayer === "Player One"){
+                                        // if (currentPlayer === "Player One"){
                     //     pOneStrikes ++;
                     //     console.log(pOneStrikes)
 
@@ -620,7 +611,7 @@ function getMovieImage() {
             console.log(movie)
 
             for(let i=0; i<resp.results.length; i++){   
-                console.log(resp.results[i])            
+                // console.log(resp.results[i])            
                 if((filmographyArray.includes(resp.results[i].id)) && (movie.toLowerCase() === resp.results[i].title.toLowerCase())){
                     console.log(resp.results[i].title)
                     movieImage = resp.results[i].poster_path
@@ -635,41 +626,63 @@ function getMovieImage() {
                     //     alert("YES")
                     //     gameOver();
                     // }
-                    if (currentPlayer === "Player One"){
+
+                    // $("#userInput").val(" ");
+                    if(solo === true){
                         pOneStrikes ++
                         console.log(pOneStrikes)
-
-                        if(pOneStrikes === 3) gameOver()
+                        if(pOneStrikes === 3){
+                          gameOver()  
+                        } 
                     }
-                    else{
-                        pTwoStrikes ++
-                        console.log(pTwoStrikes)
+                    else if (dual === true){
+                        if (currentPlayer === "Player One"){
+                        pOneStrikes ++;
+                        console.log(pOneStrikes + "PONE STRIKE MOVIE")
+                        if(pOneStrikes === 3){
+                            gameOver();
+                        }
+                        playerOneOut = true;
+                        clearInterval(intervalId);
+                        currentPlayer = "Player Two"
+                        $("#playerName").text(currentPlayer)
+                        roundTimer()
 
-                        if(pTwoStrikes ===3) gameOver()
-                    }                  
+
+                        }
+                        else{
+                            pTwoStrikes ++
+                            console.log(currentPlayer)
+                            console.log(pTwoStrikes + "PTWO STRIKE MOVIE")
+                            if(pTwoStrikes ===3) {
+                                gameOver()   
+                            } 
+                            playerTwoOut = true;
+                            console.log(playerTwoOut)
+                            clearInterval(intervalId);
+                            currentPlayer = "Player One";
+                            $("#playerName").text(currentPlayer)
+
+                            roundTimer()
+
+
+                        } 
+                    }
+                    // if (currentPlayer === "Player One"){
+                    //     pOneStrikes ++
+                    //     console.log(pOneStrikes + "PONE STRIKE")
+
+                    //     if(pOneStrikes === 3) gameOver()
+                    // }
+                    // else{
+                    //     pTwoStrikes ++
+                    //     console.log(pTwoStrikes + "PTWOSTRIKE")
+
+                    //     if(pTwoStrikes ===3) gameOver()
+                    // }                  
                 }
                    
             }
-    
-            
-            // // console.log(resp)
-            // // console.log(typeof movie)
-            // console.log(resp.results[0].poster_path )
-            // movieImage = resp.results[0].poster_path
-            // // for(let i=0; i<resp.results.length; i++){
-            // //     if(resp.results[i].title.includes movie){
-            // //         console.log(resp.results[i].title)
-
-            // //     }
-
-            // // }
-            // // CHANGE 
-
-            // movieID = resp.results[0].id
-
-            //Change
-
-            // getCast();
             console.log(movieID)
 
         })
@@ -696,7 +709,7 @@ function getCast() {
             console.log(movieID)
             for (i = 0; i < response.cast.length; i++) {
                 movieArray[i] = response.cast[i].id
-                console.log(movieArray)
+                // console.log(movieArray)
             }
             if (filmographyArray.includes(movieID)) {
                 console.log(filmographyArray) 
@@ -724,7 +737,7 @@ function checkMovie() {
 
 }
 
-
+///////////////////////////////////////////////////////////////////////////////////////////////////////////REVISE BELOW + AJAX NOT NEEDED////////////////////
 function displayPoster() {
     var queryURL = "https://www.omdbapi.com/?t=" + movie + "&apikey=77f524c2";
 
@@ -811,7 +824,7 @@ function gameOver(){
     twoCardBody.html(winOrLose2)
     twoCardFooter.html(scoreTwo)
     twoCard.append(twoCardFooter)
-
+    gameStart = false;
     gameOverBoolean = true;
 
     clearInterval(intervalId);
@@ -875,7 +888,8 @@ function gameOver(){
 
 
 $("#submit-answer").on("click", function (event) {
-    if(gameOverBoolean === true){
+    if((gameOverBoolean === true)||(gameStart === false)){
+        console.log("click prevented")
         return false;
     }
     event.preventDefault();
