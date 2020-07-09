@@ -1,6 +1,10 @@
 *{
     box-sizing: border-box;
 }
+body{
+    width:100%;
+    margin: 0px;
+}
 
 .game-top{
     background-image: url("../images/desktopbackground.png");
@@ -14,9 +18,15 @@
     /* overflow-x: hidden;
     overflow-y: hidden; */
 }
+.game-directions{
+    margin-bottom:10px;
+    height: 350px;
+}
+.directions{
+    font-size: 14px;
+}
 
-
-h1{
+h1, h3{
     text-align:center;
     font-family: 'Orbitron', sans-serif;
     position:relative;
@@ -31,11 +41,27 @@ h1{
     width:100%;
 }
 
-#container{
+.main-container{
     margin-bottom:1px;
     display:flex;
     justify-content: center;
 }
+
+.footer{
+    margin-top: 10px;
+    margin-bottom:0px;
+
+    border-top: 10px solid red;
+    background-color:rgb(133, 133, 201);
+}
+.footer-copyright{
+    background-color:red;
+    color:white;
+    height: 15px;
+    margin-bottom:0px;
+    
+}
+
 
 /* Selection Input */
 
@@ -135,10 +161,41 @@ p{
     color:white;    
 }
 
+    div.scoreCard{
+    border-radius: 9px;
+    height:240px;
+    width: 175px;
+    padding:0;
+    margin:0;    
+    /* z-index:-1; */
+    background-color: red;
+    font-family: 'Press Start 2P', cursive;
+    text-shadow: 2px 2px rgb(98, 95, 133);
+    font-size: 65%;
+    color:white; 
+}
+
+.card-body{
+    display:Flex;
+    justify-content: center;
+    align-items: center;
+
+
+}
+
 .gifText{
     text-align: center;
     position: relative;
     top: 46%;
+}
+
+.playerPrompt{
+    color:black;
+    top: 10px;
+    text-align: center;
+    position: relative;
+
+
 }
 
 /* .gifControl1{
@@ -194,23 +251,10 @@ p{
     left: 25px;
 }
 
-/* .gifControl{     
-    border-radius: 9px;
-    position:relative;
-    height:240px;
-    width: 175px;
-    padding:0;
-    margin:0;    
-    z-index:-3;
-} */
-
-/* img{
-    width:auto;  
-} */
 
 /* Curtains & Animation  */
 
-#curtainLeft{
+/* #curtainLeft{
     position: absolute;
     z-index: 3;
     top: 0;
@@ -236,7 +280,7 @@ p{
 @keyframes right {
     from {right: 0px;}
     to {right: -1000px;}
-}
+} */
 
 /* Media Queries */
 
@@ -255,7 +299,7 @@ p{
     #player{
         top:121px;
 }  
-    .gifControl{     
+    .gifControl, div.scoreCard{     
         height:217px;
         width: 158px;
 }
@@ -286,7 +330,7 @@ p{
     #player{
         top:121px;
 }  
-    .gifControl{     
+    .gifControl, div.scoreCard{     
         height:194px;
         width: 143px;
 }
@@ -318,7 +362,7 @@ p{
     #player{
         top:115px;
 }  
-    .gifControl{     
+    .gifControl, div.scoreCard{     
         height:192.5px;
         width: 140px;
 }
@@ -354,7 +398,7 @@ form{
     top:115px;
 } 
 
-.gifControl{     
+.gifControl, div.scoreCard{     
     height:192.5px;
     width: 140px;
 }
@@ -392,7 +436,7 @@ body{
     position:fixed;
 }
 
-#container{
+.main-container{
     width: 160px;
 }
 

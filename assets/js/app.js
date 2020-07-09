@@ -61,7 +61,7 @@
 
 
 // Your web app's Firebase configuration
-var userGuess;
+// var userGuess;
 var movie = "";
 var actor = "";
 var actorID = 0;
@@ -89,9 +89,12 @@ var firstActorSelected = false;
 var turnComplete = false;
 var dual = false;
 var solo = false;
-var loading = false;
+// var loading = false;
+var gameOverBoolean = false;
 var pOneScore = 0;
 var pTwoScore = 0;
+var pOneStrikes = 0;
+var pTwoStrikes = 0;
 var currentPlayer = "Player One";
 var playerOneOut = false;
 var playerTwoOut = false;
@@ -107,11 +110,12 @@ var defaultImage = "https://i.ibb.co/kJysHbr/image-Frame.gif";
 
 $(document).ready(function(){
     getConfigData();
-    startScreen();
-   
+    startScreen();   
 });
 
 function startScreen(){
+    pOneScore = 0;
+    pTwoScore = 0;
     $("#posterPic").html("<img class='gifControl' src='./assets/images/curtainLeft.png' />")
     $("#firstActor").html("<img class='gifControl' src='./assets/images/curtainLeft.png' />")
     $("#secondActor").html("<img class='gifControl' src='./assets/images/curtainLeft.png' />")
@@ -131,6 +135,15 @@ $("#posterPlate").on("click", function(){
     if (startClicked){
         return false;
     }
+    else if(gameOverBoolean===true){
+        startClicked = false;
+        gameOverBoolean = false;
+        solo = false;
+        dual = false;
+        turn = 0;
+        startScreen()
+    }
+    else{
     startClicked = true;
     
     console.log(1)
@@ -158,13 +171,15 @@ $("#posterPlate").on("click", function(){
 
     $("#posterPic").html(startDiv);
     $("#firstActor").html(playerOneDiv);
-    $("#secondActor").html(playerTwoDiv); 
+    $("#secondActor").html(playerTwoDiv);    
+    }
+     
 })
 
 // onClick functions for selecting the number of players
 
 $(document).on("click", "#facePlate1", function(){
-    if(dual === true || solo === true){
+    if(dual === true || solo === true || startClicked === false){
         return false;
     }
     solo = true;
@@ -174,7 +189,7 @@ $(document).on("click", "#facePlate1", function(){
 })
 
 $(document).on("click", "#facePlate2", function(){
-    if(dual ===true || solo === true){
+    if(dual ===true || solo === true || startClicked === false){
         return false;
     }
     dual = true;
@@ -199,8 +214,7 @@ function turnControl(){
         console.log("turncontrol1")
         currentPlayer = currentPlayer === "Player One" ? "Player Two" : "Player One";
 
-        $("#playerName").text(currentPlayer)
-         
+        $("#playerName").text(currentPlayer)         
      }
      else if(solo === true){
          console.log(currentPlayer + "solo")
@@ -230,34 +244,40 @@ function roundControl(){
 
 
 function roundTimer(){
+    if (gameOverBoolean === true){
+        console.log("true")
+        return false;
+    }
+
     var promptText = "";
     var turnPrompter = $("<div>");
     turnPrompter.addClass("gifControl");
     var turnPrompt = $("<p>")
-        turnPrompt.addClass("gifText")
-        turnPrompt.text(promptText)
-        turnPrompt.css({"color":"white", "font-size":" 15px", "text-align":"center"})
+    turnPrompt.addClass("gifText")
+    turnPrompt.text(promptText)
+    // turnPrompt.css({"color":"white", "font-size":" 15px", "text-align":"center"})
+    var playerPrepend = currentPlayer;
     turnPrompter.html(turnPrompt)
     switch(round){
         case 1 : 
             console.log("round 1");
-            
+             
             promptText = "Select First Actor"
-            turnPrompt.text(promptText)
+            turnPrompt.html(promptText)
 
             $("#posterPic").html(turnPrompter);
 
             break;
         case 2: 
             promptText = "Select Movie"
-            turnPrompt.text(promptText)
+            turnPrompt.html(promptText)
 
             $("#posterPic").html(turnPrompter);
 
             break;
         case 3: 
             promptText = "Select Second Actor"
-            turnPrompt.text(promptText)
+            turnPrompt.html(promptText)
 
             $("#secondActor").html(turnPrompter);
             break;
@@ -293,14 +313,23 @@ function roundTimer(){
                 console.log("ELSE IF -----------------------------------------------")
                 clearInterval(intervalId);
                 if(currentPlayer === "Player One"){
-                    playerOneOut=true; 
+                    pOneStrikes++;
+                    console.log(pOneStrikes)
+                    playerOneOut = true; 
+                    if(pOneStrikes === 3){
+                        gameOver()
+                    }
                     console.log("fired")
                     currentPlayer = "Player Two"; 
 
                 }
                 else if(currentPlayer === "Player Two"){
+                    pTwoStrikes++;
+                    console.log(pTwoStrikes)
                     playerTwoOut=true;
-                    console.log("fired")
+                    if(pTwoStrikes === 3){
+                        gameOver()
+                    }
 
                     currentPlayer = "Player One";
                 
@@ -319,7 +348,12 @@ function roundTimer(){
                 }
             else if((count<=0) && (solo===true)){
                 clearInterval(intervalId);
-                gameOver()
+                pOneStrikes ++;
+                console.log(pOneStrikes)
+                if(pOneStrikes === 3){
+                    gameOver()
+                }
+                roundTimer()
             }  
         },1000)  
     },1500)
@@ -410,8 +444,66 @@ function getFirstFilmography() {
                 else {
                     actorArray.pop()
                     $("#userInput").val(" ");
-                    console.log("you have a strike")
-                    console.log(actorArray)
+                    if(solo === true){
+                        pOneStrikes ++
+                        console.log(pOneStrikes)
+                        if(pOneStrikes === 3){
+                          gameOver()  
+                        } 
+                    }
+                    else if (dual === true){
+                        if (currentPlayer === "Player One"){
+                        pOneStrikes ++;
+                        console.log(pOneStrikes)
+                        if(pOneStrikes === 3){
+                            gameOver();
+                        }
+                        playerOneOut = true;
+                        clearInterval(intervalId);
+                        currentPlayer = "Player Two"
+                        $("#playerName").text(currentPlayer)
+                        roundTimer()
+
+
+                        }
+                        else{
+                            pTwoStrikes ++
+                            console.log(currentPlayer)
+                            console.log(pTwoStrikes)
+                            if(pTwoStrikes ===3) gameOver()
+                            playerTwoOut = true;
+                            console.log(playerTwoOut)
+                            clearInterval(intervalId);
+                            currentPlayer = "Player One";
+                            $("#playerName").text(currentPlayer)
+
+                            roundTimer()
+
+
+                        } 
+                    }
+    
+
+
+
+
+
+
+                    
+
+                    // if (currentPlayer === "Player One"){
+                    //     pOneStrikes ++;
+                    //     console.log(pOneStrikes)
+
+                    //     if(pOneStrikes === 3) gameOver()
+
+                    // }
+                    // else{
+                    //     pTwoStrikes ++
+                    //     console.log(pTwoStrikes)
+
+                    //     if(pTwoStrikes ===3) gameOver()
+                    // }   
                 }
             }
             else{
@@ -424,6 +516,7 @@ function getFirstFilmography() {
 
 function displayFirstPicture() {
     clearInterval(intervalId)
+    console.log(actorArray)
 
     console.log("turn" + turn + "------------------------")
     if(actorArray[turn].image.includes(defaultImage)){
@@ -454,73 +547,7 @@ function displayFirstPicture() {
 }
 
 
-// $("#secondActor").html(`<img class= "gifControl" src="${conc}"  alt="Gif"></div>`+"<div class='actorName'>" + actor.toUpperCase() + "</div>")
-//     setTimeout(updateBoard, 1000 * 3);
 
-
-/*************************************************handles user guess for actor *************************/
-
-// function getActorImage() {
-//     var getActorID = "https://api.themoviedb.org/3/search/person?api_key=20748fb6c1ff9fc0bd764838374d9f26&language=en-US&query=" + actor + "&page=1&include_adult=false"
-
-//     $.ajax({
-//         "async": true,
-//         "crossDomain": true,
-//         url: getActorID,
-//         method: "GET",
-//         "headers": {},
-//         "data": "{}"
-//     })
-//         .then(function (response) {
-//             console.log(response)
-//             if (response.results.length > 0) {
-//                 console.log(response.results[0].id)
-//                 console.log(response.results[0].profile_path)
-//                 var object = {};
-//                 object["name"] = actor;
-//                 object["id"] = response.results[0].id;
-//                 object["image"] = response.results[0].profile_path;
-//                 actorArray.push(object);
-//                 console.log(actorArray);
-//                 actorID = response.results[0].id;
-//                 // getFilmography()
-//                 getFirstFilmography()
-//             };
-//         })
-// };
-
-// function getFilmography() {
-//     var filmography = "https://api.themoviedb.org/3/person/" + actorID + "/movie_credits?api_key=20748fb6c1ff9fc0bd764838374d9f26&language=en-US"
-
-//     $.ajax({
-//         "async": true,
-//         "crossDomain": true,
-//         url: filmography,
-//         method: "GET",
-//         "headers": {},
-//         "data": "{}"
-//     })
-//         .then(function (response) {
-//             console.log(response)
-//             for (i = 0; i < response.cast.length; i++) {
-//                 filmographyArray[i] = response.cast[i].id
-//             }
-//             if (movieArray.includes(actorID)) {
-//                 checkActor();
-//             }
-//             else {
-//                 $("#userInput").val(" ");
-//                 console.log("you have a strike")
-//                 // M.toast({ html: 'You have A Strike' })
-
-//                 strikes++
-//             }
-
-//         })
-
-
-
-// }
 function checkScore(){
     if (playerOneOut === true){
         pTwoScore ++
@@ -589,10 +616,12 @@ function getMovieImage() {
     })
         .then(function (resp) {
             // var movieIdArray = [];
+            console.log(resp) 
+            console.log(movie)
+
             for(let i=0; i<resp.results.length; i++){   
-                console.log(i) 
-                console.log(resp.results.length)            
-                if(filmographyArray.includes(resp.results[i].id)){
+                console.log(resp.results[i])            
+                if((filmographyArray.includes(resp.results[i].id)) && (movie.toLowerCase() === resp.results[i].title.toLowerCase())){
                     console.log(resp.results[i].title)
                     movieImage = resp.results[i].poster_path
                     movieID = resp.results[i].id
@@ -602,7 +631,22 @@ function getMovieImage() {
                 else if ((i>=resp.results.length -1)){
                     $("#userInput").val(" ");
                     console.log("you has strike 111")
-                    strikes++                   
+                    // if ((pOneStrikes === 3) || (pTwoStrikes ===3)){
+                    //     alert("YES")
+                    //     gameOver();
+                    // }
+                    if (currentPlayer === "Player One"){
+                        pOneStrikes ++
+                        console.log(pOneStrikes)
+
+                        if(pOneStrikes === 3) gameOver()
+                    }
+                    else{
+                        pTwoStrikes ++
+                        console.log(pTwoStrikes)
+
+                        if(pTwoStrikes ===3) gameOver()
+                    }                  
                 }
                    
             }
@@ -692,6 +736,7 @@ function displayPoster() {
         console.log(response)
         var imgURL = actorConfig + movieImage;
         console.log(actorConfig)
+        console.log(imgURL)
         clearInterval(intervalId);
         turnControl();
 
@@ -726,13 +771,102 @@ function beginGame() {
 }
 
 function gameOver(){
+    var gameOverPrompt= "Game Over!";
+    var gameOverDiv = $("<div>")
+    gameOverDiv.addClass("gifControl");
+    var gameOverText = $("<p>")
+    gameOverText.addClass("gifText")
+    gameOverText.text(gameOverPrompt)
+    // gameOverText.css({"color":"white", "font-size":" 15px", "text-align":"center"})
+    gameOverDiv.html(gameOverText)
+
+    var youWin = "You Win!"
+    var youLose = "You lose!"
+    var tieGame = "Tie Game!"
+
+    var oneCard = $("<div>").addClass("card text-center scoreCard")
+    var oneCardHeader = $("<div>").addClass("card-header").text("Player One")  
+    var oneCardBody = $("<div>").addClass("card-body")
+    var winOrLose = $("<h5>")
+    winOrLose.html(youWin)
+    var oneCardFooter = $("<div>").addClass("card-footer")
+    var scoreOne = $("<p>").html("Score :" + pOneScore)
+
+    oneCard.append(oneCardHeader)
+    oneCard.append(oneCardBody)
+    oneCardBody.html(winOrLose)
+    oneCardFooter.html(scoreOne)
+    oneCard.append(oneCardFooter)
+
+    var twoCard = $("<div>").addClass("card text-center scoreCard")
+    var twoCardHeader = $("<div>").addClass("card-header").text("Player Two")  
+    var twoCardBody = $("<div>").addClass("card-body")
+    var winOrLose2 = $("<h5>")
+    winOrLose2.html(youLose)
+    var twoCardFooter = $("<div>").addClass("card-footer")
+    var scoreTwo = $("<p>").html("Score :" + pTwoScore)
+
+    twoCard.append(twoCardHeader)
+    twoCard.append(twoCardBody)
+    twoCardBody.html(winOrLose2)
+    twoCardFooter.html(scoreTwo)
+    twoCard.append(twoCardFooter)
+
+    gameOverBoolean = true;
+
     clearInterval(intervalId);
     setTimeout(function(){
-        $("#posterPic").html("<img class='gifControl' src='./assets/images/curtainLeft.png' />")
+        gameOverText.text(gameOverPrompt)
+        $("#posterPic").html(gameOverDiv)
         $("#firstActor").html("<img class='gifControl' src='./assets/images/curtainLeft.png' />")
-        $("#secondActor").html("<img class='gifControl' src='./assets/images/curtainLeft.png' />")    
+        $("#secondActor").html("<img class='gifControl' src='./assets/images/curtainLeft.png' />") 
+        playAgain()   
     },2000)
-    
+  
+
+
+    function playAgain(){
+        setTimeout(function(){
+            // gameOverBoolean = true;
+            pOneStrikes = 0;
+            pTwoStrikes = 0;
+            firstActorSelected = false;
+            turnComplete = false;
+            actorArray = [];
+            guessesArray = [];
+            gameOverPrompt = "Click to Play Again";
+            gameOverText.text(gameOverPrompt)
+            $("#posterPic").html(gameOverDiv)
+            startClicked = false;
+            if (dual === true){
+                if (pOneScore>pTwoScore){
+                    $("#firstActor").html(oneCard)
+                    $("#secondActor").html(twoCard)  
+                }
+                else if (pOneScore===pTwoScore){
+                    winOrLose.html(tieGame)
+                    winOrLose2.html(tieGame)
+                    $("#firstActor").html(oneCard)
+                    $("#secondActor").html(twoCard) 
+
+                }
+                else{
+                    winOrLose.html(youLose)
+                    winOrLose2.html(youWin)
+                    $("#firstActor").html(oneCard)
+                    $("#secondActor").html(twoCard)
+ 
+                }
+            }
+            else{
+                winOrLose.html("Try Again!")
+                $("#firstActor").html(oneCard)
+                console.log("4")
+
+            }
+        },1500)
+
+    }
 
     resetVariables();
     console.log("GameOver")
@@ -741,6 +875,9 @@ function gameOver(){
 
 
 $("#submit-answer").on("click", function (event) {
+    if(gameOverBoolean === true){
+        return false;
+    }
     event.preventDefault();
     console.log(turn)
     let attr = $("#submit-answer").attr("data");
@@ -761,9 +898,7 @@ $("#submit-answer").on("click", function (event) {
             var userGuess = $("#userInput").val().trim().toLowerCase()
             console.log(userGuess);
             movie = userGuess;
-            checkMovieGuesses();
-    
-    
+            checkMovieGuesses();    
             if (movie === undefined) {
                 return 'undefined value!'
             }
@@ -794,6 +929,7 @@ function checkActorGuesses() {
         console.log(actor)
     }
 }
+
 function checkMovieGuesses() {
     if (guessesArray.includes(movie)) {
         $("#userInput").val(" ");
@@ -813,6 +949,7 @@ function resetVariables() {
     actor = "";
     actorID = 0;
     movieID = 0;
+    round = 1; 
 }
 
 
