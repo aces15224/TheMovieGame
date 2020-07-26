@@ -100,7 +100,7 @@ p{
     width:150px;
     z-index:-2;
     background-color:blue;
-    margin:auto;
+    margin:10px auto;
 }
 
 /* Player Information Divs */
@@ -136,7 +136,7 @@ p{
 
 
 .actorName{
-    z-index: 5;
+    /* z-index: 5; */
     color:white;
     font-size: 65%;
     position:absolute;
@@ -284,7 +284,7 @@ p{
 
 /* Media Queries */
 
-@media screen  and (max-width: 1320px) {
+/* @media screen  and (max-width: 1320px) {
     #facePlate1, #facePlate2, #posterPlate{
         height: 247.69px;
         width: 195.83px;
@@ -307,14 +307,44 @@ p{
         top: -234.5px;
         left: 22px;
 }  
-} 
+}  */
 
-@media screen  and (max-width: 1276px){
-    #main, #main2, #main3{
-        max-height: 250px;}
+@media screen  and (max-width: 1315px) {
+    #facePlate1, #facePlate2, #posterPlate{
+        height: 247.69px;
+        width: 195.83px;
+}
+#main, #main2, #main3{
+    max-height: 250px;}
+
+
+    form{
+        width: 195.98px;
 }
 
- @media screen  and (max-width: 1182px){
+    /* #playerName{
+        width: 195.98px;  
+} */
+    #player{
+        top:121px;
+}  
+    .gifControl, div.scoreCard{     
+        height:217px;
+        width: 158px;
+}
+    #firstActor, #secondActor, #posterPic{
+        top: -234.5px;
+        left: 22px;
+}  
+} 
+
+/* @media screen  and (max-width: 1276px){
+    #main, #main2, #main3{
+        max-height: 250px;}
+ 
+} */
+
+ /* @media screen  and (max-width: 1182px){
     #facePlate1, #facePlate2, #posterPlate{
         height: 227.69px;
         width: 175.83px;
@@ -337,14 +367,15 @@ p{
     #firstActor, #secondActor, #posterPic{
         top: -215px;
         left: 20px;
+        
 }
 
     #main, #main2, #main3{
          max-height: 230px;  
 } 
-}
+} */
 
-@media screen  and (max-width: 1080px){
+/* @media screen  and (max-width: 1080px){
 
      #facePlate1, #facePlate2, #posterPlate{
         height: 222.69px;
@@ -353,7 +384,6 @@ p{
 }
     form{
         width: 170.98px;
-        bottom:150px;
 }
 
     #playerName{
@@ -373,13 +403,10 @@ p{
     #main, #main2, #main3{
         max-height: 210px;
 } 
-    #header{
-        position:relative;
-        top:-15px;
-}
-}
 
-@media screen  and (max-width: 692px){
+} */
+
+/* @media screen  and (max-width: 692px){
     #facePlate1, #facePlate2, #posterPlate{
        height: 200.69px;
        width: 150.83px;
@@ -387,7 +414,6 @@ p{
 
 form{
     width: 150.98px;
-    bottom:180px;
 }
 
 #playerName{
@@ -411,9 +437,9 @@ form{
 #main, #main2, #main3{
     max-height: 210px;
 }
-}
+} */
 
-@media screen and (max-width: 600px){
+/* @media screen and (max-width: 600px){
 
 body{
     background-image:url("../images/cellbackground.png")
@@ -463,4 +489,4 @@ form{
 #player{
     top:470px;
 } 
-}
+} */
