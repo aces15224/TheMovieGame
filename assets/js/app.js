@@ -323,7 +323,10 @@ function roundTimer(){
                 return;
             }
             else if(count <= 0){
-                console.log("Stttttrike" + movie)
+                gameStart = false;
+                var userGuess = $("#userInput").val().trim().toLowerCase();
+                userGuess = "";
+
                 strikeControl()
             }  
 
@@ -655,36 +658,41 @@ function getCast() {
 
 function checkMovie() {
     console.log("checkMovie 5")
+    
     filmographyArray = [];
     guessesArray.push(movie);
-    displayPoster();
+    clearInterval(intervalId);
     movie = "";
     $("#userInput").val(" ");
+    var imgURL = actorConfig + movieImage;
+    // turnControl();
+    $("#posterPic").html(`<img class= "gifControl" src="${imgURL}"  alt="Gif"></div>`);
     $("#input-description").html("Select Next Actor")
     $("#submit-answer").attr("data", "actor")
+    turnControl();
 
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////REVISE BELOW + AJAX NOT NEEDED////////////////////
-function displayPoster() {
-    console.log("display poster 6")
-    var queryURL = "https://www.omdbapi.com/?t=" + movie + "&apikey=77f524c2";
+// function displayPoster() {
+//     console.log("display poster 6")
+//     var queryURL = "https://www.omdbapi.com/?t=" + movie + "&apikey=77f524c2";
 
-    // Creating an AJAX call for the specific movie button being clicked
-    $.ajax({
-        url: queryURL,
-        method: "GET"
-    }).then(function (response) {
-        // console.log(response)
-        var imgURL = actorConfig + movieImage;
-        // console.log(actorConfig)
-        // console.log(imgURL)
-        clearInterval(intervalId);
-        turnControl();
+//     // Creating an AJAX call for the specific movie button being clicked
+//     $.ajax({
+//         url: queryURL,
+//         method: "GET"
+//     }).then(function (response) {
+//         // console.log(response)
+//         var imgURL = actorConfig + movieImage;
+//         // console.log(actorConfig)
+//         // console.log(imgURL)
+//         clearInterval(intervalId);
+//         turnControl();
 
-        $("#posterPic").html(`<img class= "gifControl" src="${imgURL}"  alt="Gif"></div>`);
-    });
-};
+//         $("#posterPic").html(`<img class= "gifControl" src="${imgURL}"  alt="Gif"></div>`);
+//     });
+// };
 
 
 
